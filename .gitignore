@@ -1,0 +1,5 @@
+.history
+dist
+build
+logs
+__pycache__
