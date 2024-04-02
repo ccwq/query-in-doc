@@ -1,4 +1,4 @@
-
+from tabulate import tabulate
 from tqdm import tqdm
 import time
 import logging
@@ -69,6 +69,14 @@ except Exception as e:
     logging.error('err-content:%s', e)
     print(f"打开结果文件错误:{e}")
     exit()
+
+
+file_count = len(file_list_for_process)
+hit_file_count = 0
+error_file_count = 0
+
+# 用时统计
+total_time_cost = 0
     
 # 开始解析结果
 for i in range(len(file_list_for_process)):
@@ -90,14 +98,16 @@ for i in range(len(file_list_for_process)):
     # 解析文档内容
     (error, _,key_word, hit_line_num, time_cost) = parse_document(doc_path, file_type, key_words_list)
     
+    total_time_cost = total_time_cost + time_cost
     if error:
         logging.error("err-file:%s", doc_path)
         logging.error('err-content:%s', error)
+        error_file_count = error_file_count+1
     else:
         if key_word!="clear":
             result_logger.info("%s|%s:(%ss)[%s]",key_word,hit_line_num, time_cost, doc_path)
             result_list.append([ key_word, hit_line_num, doc_path, time_cost, ])
-            
+            hit_file_count= hit_file_count+1
             # 写入csv
             try:
                 with open(RESULT_CSV_PATH, 'a', encoding='utf-8') as f:
@@ -107,13 +117,29 @@ for i in range(len(file_list_for_process)):
                 logging.error(f"error to write log: {doc_path}")
         else:
             result_logger.info("%s|%s:[%s]",key_word, doc_path, 0)
+            
+            
+            
+
     
 # output_to_csv(result_logger)
+# print(f"总耗时:{round(total_time_cost,1)}s\n扫描文件数量:{file_count}个\n命中文件:{hit_file_count}个\n错误文件:{error_file_count}个")
 
 
 
 
- 
+
+# 报表
+time.sleep(0.5)
+output_summary_list = [
+    ["指数", "值"],
+    ["总耗时:", F"{round(total_time_cost,1)}s"],
+    ["扫描文件数量:", F"{file_count}个"],
+    ["命中文件:", F"{hit_file_count}个"],
+    ["错误文件:", F"{error_file_count}个"],
+]
+print(tabulate(output_summary_list, headers="firstrow", tablefmt="grid"))
+
 
 
 
