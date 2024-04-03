@@ -140,8 +140,8 @@ output_summary_list = [
 ]
 print(tabulate(output_summary_list, headers="firstrow", tablefmt="grid"))
 
-
-
+# prsss enter to exit
+input("按任意键退出...")
 
 
     

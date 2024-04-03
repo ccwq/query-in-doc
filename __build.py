@@ -12,3 +12,4 @@ subprocess.call(['pyinstaller', "-F", file_name])
 
 copy_arguments = ['copy', "", path.abspath(R'dist\main.exe'), path.abspath(R'output-files\开始搜索.exe')]
 shutil.copy(R"dist\main.exe", R"output-files\开始搜索.exe")
+shutil.copy(R"README.md", R"output-files")
